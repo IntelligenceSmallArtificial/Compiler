@@ -1,0 +1,22 @@
+[非终结符]
+E S P A B D
+
+[终结符]
+Identifier ( ) + - * = int IntConst
+
+[文法起始符]
+P
+
+[生成式]
+P -> S;
+S -> D Identifier;
+D -> int;
+S -> Identifier = E;
+E -> E + A;
+E -> E - A;
+E -> A;
+A -> A * B;
+A -> B;
+B -> ( E );
+B -> Identifier;
+B -> IntConst;
