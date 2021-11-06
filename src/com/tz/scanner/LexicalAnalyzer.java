@@ -41,22 +41,29 @@ public class LexicalAnalyzer {
 
     public static class SymbolContent {
         private final int type;
-        private final Object property;
+        private final int offset;
 
         public SymbolContent() {
             this.type = -1;
-            this.property = "?";
+            this.offset = -1;
         }
 
-        public SymbolContent(int type, Object property) {
+        public SymbolContent(int type, int offset) {
             this.type = type;
-            this.property = property;
+            this.offset = offset;
         }
 
+        public int getType(){
+            return type;
+        }
+
+        public int getOffset(){
+            return offset;
+        }
 
         @Override
         public String toString() {
-            return type+","+property.toString();
+            return type+","+offset;
         }
     }
 

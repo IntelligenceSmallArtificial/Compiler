@@ -2,6 +2,7 @@ package com.tz.parser;
 
 import com.tz.scanner.LexicalAnalyzer.*;
 import com.tz.parser.Util.*;
+import com.tz.scanner.SemanticAnalyzer;
 import com.tz.service.FileHandler;
 
 import java.util.ArrayList;
@@ -17,10 +18,12 @@ public class SyntaxAnalyzer {
     private Stack<String> symbolStack;
     private List<String> reduceList;
     private final String PARSER_PATH = "data/out/parserList.txt";
+    private SemanticAnalyzer semanticAnalyzer;
 
     public SyntaxAnalyzer(Map<String, SymbolContent> symbolTable,List<Token> token) {
         this.symbolTable = symbolTable;
         this.token = token;
+        semanticAnalyzer = new SemanticAnalyzer(symbolTable);
         syntaxAnalyze();
     }
 
@@ -66,7 +69,7 @@ public class SyntaxAnalyzer {
         initStack();
         reduceList = new ArrayList<>();
         int length = token.size();
-        int tokenType;
+        Token currentToken;
         int topState;
         Action action;
         char actionChoose;
@@ -81,13 +84,14 @@ public class SyntaxAnalyzer {
 //            System.out.println();
 //            printStack();
             topState = stateStack.peek();
-            tokenType = token.get(i).getType();
-            action = Util.getAction(topState,tokenType);
+            currentToken = token.get(i);
+            action = Util.getAction(topState,currentToken.getType());
             actionChoose = action.getActionChoose();
             code = action.getCode();
             if(actionChoose == 's'){
                 stateStack.push(code);
-                symbolStack.push(Integer.toString(tokenType));
+                symbolStack.push(Integer.toString(currentToken.getType()));
+                semanticAnalyzer.shift(currentToken);
                 i++;
             } else if (actionChoose == 'r') {
                 grammar = Util.getGrammar(code);
@@ -102,11 +106,12 @@ public class SyntaxAnalyzer {
                 symbolStack.push(Character.toString(afterReduce));
                 topState = stateStack.peek();
                 stateStack.push(Util.getGoto(topState,afterReduce));
-
+                semanticAnalyzer.reduce(code, beforeReduce.length);
             } else if (actionChoose == 'a') {
                 grammar = Util.getGrammar(code);
                 reduceList.add(grammar.toString());
                 initStack();
+                semanticAnalyzer.accept();
                 i++;
             } else {
                 throwError();
@@ -114,6 +119,8 @@ public class SyntaxAnalyzer {
 //            printStack();
         }
         writeParser();
+        semanticAnalyzer.writeSymbolTable();
+        semanticAnalyzer.writeIntermediateCode();
     }
 
 
