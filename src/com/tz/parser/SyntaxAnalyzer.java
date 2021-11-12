@@ -2,7 +2,6 @@ package com.tz.parser;
 
 import com.tz.scanner.LexicalAnalyzer.*;
 import com.tz.parser.Util.*;
-import com.tz.scanner.SemanticAnalyzer;
 import com.tz.service.FileHandler;
 
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ public class SyntaxAnalyzer {
     private final String PARSER_PATH = "data/out/parserList.txt";
     private SemanticAnalyzer semanticAnalyzer;
 
-    public SyntaxAnalyzer(Map<String, SymbolContent> symbolTable,List<Token> token) {
+    public SyntaxAnalyzer(Map<String, SymbolContent> symbolTable, List<Token> token) {
         this.symbolTable = symbolTable;
         this.token = token;
         semanticAnalyzer = new SemanticAnalyzer(symbolTable);
@@ -121,6 +120,7 @@ public class SyntaxAnalyzer {
         writeParser();
         semanticAnalyzer.writeSymbolTable();
         semanticAnalyzer.writeIntermediateCode();
+        semanticAnalyzer.callAsmGenerator();
     }
 
 

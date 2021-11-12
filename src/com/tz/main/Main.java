@@ -1,5 +1,4 @@
 package com.tz.main;
-
 import com.tz.scanner.LexicalAnalyzer;
 
 public class Main {

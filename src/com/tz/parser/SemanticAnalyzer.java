@@ -1,7 +1,7 @@
-package com.tz.scanner;
+package com.tz.parser;
 
+import com.tz.asmGenerator.AsmGenerator;
 import com.tz.scanner.LexicalAnalyzer.*;
-import com.tz.parser.Util.*;
 import com.tz.service.FileHandler;
 
 import java.util.ArrayList;
@@ -141,7 +141,7 @@ public class SemanticAnalyzer {
     }
 
     public String newtemp(){
-        String temp = "t" + addr;
+        String temp = "$" + addr;
         addr++;
         return temp;
     }
@@ -181,7 +181,7 @@ public class SemanticAnalyzer {
                 break;
             case 3: // S -> 1 7 E;
                 if(symbolTable.get(s[0].name)!=null){
-                    genCode("=",s[0].name,s[2].addr);
+                    genCode("=",s[2].addr,s[0].name);
                     stateStack.push(new Semantic());
                 } else error();
                 break;
@@ -258,5 +258,7 @@ public class SemanticAnalyzer {
         FileHandler.writeFile(INTERMEDIATE_Code_PATH,_content,true);
     }
 
-
+    public void callAsmGenerator(){
+        new AsmGenerator(this.symbolTable,this.intermediateList);
+    }
 }
